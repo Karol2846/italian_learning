@@ -3,7 +3,7 @@ import { lessons, units } from './content'
 import type { Lesson } from './content/types'
 import { buildLessonSession, buildReviewSession, dueItems } from './lib/session'
 import { isDue, review, schedule } from './lib/srs'
-import { loadProgress, loadSession, saveProgress, saveSession, type Progress, type SavedSession } from './lib/store'
+import { loadProgress, loadSession, loadSettings, saveProgress, saveSession, saveSettings, type Progress, type SavedSession } from './lib/store'
 import { GrammarCard, Session, type Results } from './Session'
 
 type Screen =
@@ -41,6 +41,7 @@ function applyResults(p: Progress, results: Results, s: SavedSession): Progress 
 export function App() {
   const [progress, setProgress] = useState(loadProgress)
   const [saved, setSaved] = useState(loadSession)
+  const [settings, setSettings] = useState(loadSettings)
   const [screen, setScreen] = useState<Screen>({ name: 'home' })
   const [tab, setTab] = useState<'course' | 'grammar'>('course')
   const home = () => setScreen({ name: 'home' })
@@ -71,6 +72,7 @@ export function App() {
     return (
       <Session
         saved={saved}
+        showIpa={settings.ipa}
         onStep={(s) => {
           saveSession(s)
           setSaved(s)
@@ -133,7 +135,10 @@ export function App() {
         <ul className="wordlist">
           {screen.lesson.items.map((i) => (
             <li key={i.id}>
-              <span lang="it">{i.it}</span>
+              <span>
+                <span lang="it">{i.it}</span>
+                {settings.ipa && <span className="ipa"> /{i.ipa}/</span>}
+              </span>
               <span className="muted">{i.pl}</span>
             </li>
           ))}
@@ -229,6 +234,21 @@ export function App() {
             <h1>Gramatyka</h1>
             <p className="muted">Wszystko, co było już w lekcjach. Nowe tematy dochodzą z każdą kolejną.</p>
           </header>
+          <label className="setting">
+            <input
+              type="checkbox"
+              checked={settings.ipa}
+              onChange={(e) => {
+                const next = { ...settings, ipa: e.target.checked }
+                setSettings(next)
+                saveSettings(next)
+              }}
+            />
+            <span>
+              Zapis fonetyczny (IPA) przy słówkach
+              <small>Pokazuje wymowę przy nowych słówkach, w czytaniu i na listach słówek.</small>
+            </span>
+          </label>
           {learned.length === 0 && <p className="muted">Ukończ pierwszą lekcję, a jej gramatyka pojawi się tutaj.</p>}
           <ul className="topics">
             {learned.map((lesson) => (

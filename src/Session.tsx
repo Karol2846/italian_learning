@@ -16,6 +16,7 @@ interface Feedback {
 
 export function Session(props: {
   saved: SavedSession
+  showIpa: boolean
   onStep: (s: SavedSession) => void
   onDone: (r: Results) => void
   onQuit: () => void
@@ -74,8 +75,8 @@ export function Session(props: {
       </header>
 
       <main className="session-body" key={pos}>
-        {ex.kind === 'intro' && <Intro ex={ex} />}
-        {ex.kind === 'choose' && <Choose ex={ex} locked={!!feedback} onAnswer={answer} />}
+        {ex.kind === 'intro' && <Intro ex={ex} showIpa={props.showIpa} />}
+        {ex.kind === 'choose' && <Choose ex={ex} showIpa={props.showIpa} locked={!!feedback} onAnswer={answer} />}
         {ex.kind === 'type' && <Type ex={ex} locked={!!feedback} onAnswer={answer} />}
         {ex.kind === 'build' && <Build ex={ex} locked={!!feedback} onAnswer={answer} />}
         {ex.kind === 'grammar' && <GrammarCard grammar={ex.grammar} />}
@@ -118,12 +119,13 @@ function Speaker({ text, big }: { text: string; big?: boolean }) {
   )
 }
 
-function Intro({ ex }: { ex: Extract<Exercise, { kind: 'intro' }> }) {
+function Intro({ ex, showIpa }: { ex: Extract<Exercise, { kind: 'intro' }>; showIpa: boolean }) {
   useEffect(() => speak(ex.item.it), [ex.item])
   return (
     <div className="card intro">
       <p className="label">Nowe</p>
       <h2 lang="it">{ex.item.it}</h2>
+      {showIpa && <p className="ipa">/{ex.item.ipa}/</p>}
       <p className="pl">{ex.item.pl}</p>
       <Speaker text={ex.item.it} />
       {ex.item.note && <p className="note">{ex.item.note}</p>}
@@ -133,7 +135,8 @@ function Intro({ ex }: { ex: Extract<Exercise, { kind: 'intro' }> }) {
 
 type AnswerFn = (ok: boolean, detail?: string) => void
 
-function Choose({ ex, locked, onAnswer }: { ex: Extract<Exercise, { kind: 'choose' }>; locked: boolean; onAnswer: AnswerFn }) {
+function Choose(props: { ex: Extract<Exercise, { kind: 'choose' }>; showIpa: boolean; locked: boolean; onAnswer: AnswerFn }) {
+  const { ex, showIpa, locked, onAnswer } = props
   const [picked, setPicked] = useState<string | null>(null)
   const { item, mode } = ex
   const right = mode === 'recall' ? item.it : item.pl
@@ -160,6 +163,7 @@ function Choose({ ex, locked, onAnswer }: { ex: Extract<Exercise, { kind: 'choos
         {mode === 'read' && (
           <>
             <h2 lang="it">{item.it}</h2>
+            {showIpa && <p className="ipa">/{item.ipa}/</p>}
             <Speaker text={item.it} />
           </>
         )}

@@ -46,3 +46,12 @@ export const saveProgress = (p: Progress) => write(KEY, p)
 
 export const loadSession = () => read<SavedSession>(SESSION_KEY)
 export const saveSession = (s: SavedSession | null) => write(SESSION_KEY, s)
+
+export interface Settings {
+  /** Show IPA transcriptions next to Italian words. */
+  ipa: boolean
+}
+
+const SETTINGS_KEY = 'italiano.settings.v1'
+export const loadSettings = (): Settings => ({ ipa: false, ...read<Partial<Settings>>(SETTINGS_KEY) })
+export const saveSettings = (s: Settings) => write(SETTINGS_KEY, s)

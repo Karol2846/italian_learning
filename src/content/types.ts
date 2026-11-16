@@ -5,6 +5,8 @@ export interface Item {
   id: string
   it: string
   pl: string
+  /** Phonemic IPA transcription (standard pronunciation), without slashes. */
+  ipa: string
   /** Short usage note shown on the intro card. */
   note?: string
   /** Other spellings accepted when typing (e.g. feminine form). */

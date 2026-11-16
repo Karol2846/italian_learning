@@ -191,3 +191,12 @@ th { color: var(--muted); font-size: 0.8rem; text-transform: uppercase; letter-s
 .topics summary span { display: block; font-weight: 400; color: var(--muted); font-size: 0.85rem; margin-top: 2px; }
 .topics .grammar { padding-bottom: 8px; }
 .topics .grammar > .label, .topics .grammar > h2 { display: none; }
+
+.ipa { color: var(--muted); font-family: 'Charis SIL', 'Doulos SIL', 'Noto Sans', 'Segoe UI', system-ui, sans-serif; font-size: 1rem; }
+.setting {
+  display: flex; gap: 12px; align-items: flex-start; background: var(--surface);
+  border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; margin-bottom: 6px;
+}
+.setting input { width: 22px; height: 22px; margin-top: 2px; accent-color: var(--green); flex: none; }
+.setting span { font-weight: 600; }
+.setting small { display: block; font-weight: 400; color: var(--muted); font-size: 0.85rem; margin-top: 2px; }
