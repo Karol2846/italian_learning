@@ -65,9 +65,12 @@ Każdy moduł: 4–5 lekcji + lekcja-powtórka z dłuższym dialogiem.
 ## Etapy
 
 - [x] **Etap 1 — MVP**: PWA, silnik lekcji, SRS, rygorystyczne sprawdzanie,
-  mapa kursu, moduł 1 (4 lekcje).
+  mapa kursu, moduł 1 (4 lekcje). Lekcję można rozbić na 2–3 części, przerwana
+  sesja wznawia się od tego samego miejsca, pasek postępu jest podzielony na
+  sekcje, a poznana gramatyka zbiera się w zakładce „Gramatyka”.
 - [ ] **Etap 2 — treść i mówienie**: moduły 2–12, ćwiczenia mówienia
-  (rozpoznawanie mowy), eksport/import postępu, statystyki i seria dni.
+  (rozpoznawanie mowy), osobne ćwiczenia z gramatyki w zakładce „Gramatyka”,
+  eksport/import postępu, statystyki i seria dni.
 - [ ] **Etap 3 — Claude na żywo**: backend z kluczem API; dialogi generowane z
   poznanych słówek, rozmowa tekstowa/głosowa w scenkach (bar, hotel…),
   ocena wolnych odpowiedzi z wyjaśnieniem błędu, „zapytaj o gramatykę”.

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import type { Dialogue, Grammar } from './content/types'
 import { checkAnswer, normalize } from './lib/check'
 import type { Exercise } from './lib/session'
+import type { SavedSession } from './lib/store'
 import { speak } from './lib/tts'
 
 /** itemId → true if every answer about it in this session was right. */
@@ -13,36 +14,63 @@ interface Feedback {
   detail?: string
 }
 
-export function Session(props: { title: string; exercises: Exercise[]; onDone: (r: Results) => void; onQuit: () => void }) {
-  const [queue, setQueue] = useState(props.exercises)
-  const [pos, setPos] = useState(0)
+export function Session(props: {
+  saved: SavedSession
+  onStep: (s: SavedSession) => void
+  onDone: (r: Results) => void
+  onQuit: () => void
+}) {
+  const [queue, setQueue] = useState(props.saved.queue)
+  const [pos, setPos] = useState(props.saved.pos)
   const [feedback, setFeedback] = useState<Feedback | null>(null)
-  const results = useRef<Results>({})
+  const results = useRef<Results>({ ...props.saved.results })
   const ex = queue[pos]
 
   const answer = (ok: boolean, detail?: string) => {
     if ('item' in ex && ex.kind !== 'intro') {
       results.current[ex.item.id] = (results.current[ex.item.id] ?? true) && ok
     }
-    if (!ok) setQueue((q) => [...q, ex])
+    if (!ok) setQueue((q) => [...q, { ...ex, section: 'Poprawki' }])
     setFeedback({ ok, detail })
   }
 
   const next = () => {
     setFeedback(null)
-    if (pos + 1 >= queue.length) props.onDone(results.current)
-    else setPos(pos + 1)
+    if (pos + 1 >= queue.length) return props.onDone(results.current)
+    setPos(pos + 1)
+    props.onStep({ ...props.saved, queue, pos: pos + 1, results: { ...results.current } })
   }
+
+  const segments = useMemo(() => {
+    const out: { name: string; start: number; len: number }[] = []
+    queue.forEach((e, i) => {
+      const last = out[out.length - 1]
+      if (last?.name === e.section) last.len++
+      else out.push({ name: e.section, start: i, len: 1 })
+    })
+    return out
+  }, [queue])
+  const current = segments.find((s) => pos < s.start + s.len)!
 
   return (
     <div className="session">
       <header className="session-head">
-        <button className="icon-btn" onClick={props.onQuit} aria-label="Zamknij">
-          ✕
-        </button>
-        <div className="bar" aria-label="Postęp">
-          <div style={{ width: `${(pos / queue.length) * 100}%` }} />
+        <div className="head-row">
+          <button className="icon-btn" onClick={props.onQuit} aria-label="Zamknij">
+            ✕
+          </button>
+          <div className="bar" aria-label="Postęp">
+            {segments.map((s) => (
+              <div key={s.start} className="seg" style={{ flexGrow: s.len }}>
+                <div style={{ width: `${Math.min(Math.max((pos - s.start) / s.len, 0), 1) * 100}%` }} />
+              </div>
+            ))}
+          </div>
         </div>
+        <p className="where">
+          <strong>{current.name}</strong> · {pos - current.start + 1} z {current.len}
+          {props.saved.parts > 1 && ` · część ${props.saved.part + 1} z ${props.saved.parts}`}
+        </p>
       </header>
 
       <main className="session-body" key={pos}>
