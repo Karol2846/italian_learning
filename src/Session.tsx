@@ -305,13 +305,15 @@ export function GrammarCard({ grammar }: { grammar: Grammar }) {
         ) : (
           <div className="table-wrap" key={i}>
             <table>
-              <thead>
-                <tr>
-                  {block[0].map((c, j) => (
-                    <th key={j}>{c}</th>
-                  ))}
-                </tr>
-              </thead>
+              {block[0].some(Boolean) && (
+                <thead>
+                  <tr>
+                    {block[0].map((c, j) => (
+                      <th key={j}>{c}</th>
+                    ))}
+                  </tr>
+                </thead>
+              )}
               <tbody>
                 {block.slice(1).map((row, r) => (
                   <tr key={r}>

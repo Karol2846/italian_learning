@@ -224,7 +224,7 @@ export function App() {
             </section>
           ))}
 
-          <p className="muted footer-note">Kolejne moduły w drodze: w barze, ludzie, w mieście, restauracja…</p>
+          <p className="muted footer-note">Kolejne moduły w drodze: w mieście, restauracja, zakupy…</p>
         </>
       )}
 
